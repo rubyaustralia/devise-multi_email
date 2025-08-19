@@ -1,84 +1,47 @@
-RailsApp::Application.configure do
+# frozen_string_literal: true
+
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
-  config.cache_classes = true
+  config.enable_reloading = false
 
-  # Eager load code on boot. This eager loads most of Rails and
-  # your application in memory, allowing both thread web servers
-  # and those relying on copy on write to perform better.
-  # Rake tasks automatically ignore this option for performance.
+  # Eager load code on boot for better performance and memory savings (ignored by Rake tasks).
   config.eager_load = true
 
-  # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  # Full error reports are disabled.
+  config.consider_all_requests_local = false
+
+  # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
 
-  # Enable Rack::Cache to put a simple HTTP cache in front of your application
-  # Add `rack-cache` to your Gemfile before enabling this.
-  # For large-scale production use, consider using a caching reverse proxy like nginx, varnish or squid.
-  # config.action_dispatch.rack_cache = true
-
-  # Disable Rails's static asset server (Apache or nginx will already do this).
-  if Rails.version >= "4.2.0"
-    config.serve_static_files = false
-  else
-    config.serve_static_assets = false
-  end
-
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor  = :uglifier
-  # config.assets.css_compressor = :sass
-
-  # Whether to fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
-  # Generate digests for assets URLs.
-  config.assets.digest = true
-
-  # Version of your assets, change this if you want to expire all your assets.
-  config.assets.version = '1.0'
-
-  # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # CloudFlare handles SSL termination for us. Forcing it at the Rails layer will cause an infinite
+  # redirect loop.
+  config.force_ssl = false
 
-  # Set to :debug to see everything in the log.
-  config.log_level = :info
+  # Log to STDOUT with the current request id as a default log tag.
+  config.log_tags = [:request_id]
+  config.logger = ActiveSupport::Logger.new($stdout)
 
-  # Prepend all log lines with the following tags.
-  # config.log_tags = [:subdomain, :uuid]
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
-  # Use a different logger for distributed setups.
-  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+  # Don't log any deprecations.
+  config.active_support.report_deprecations = false
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
-
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = "http://assets.example.com"
-
-  # Precompile additional assets.
-  # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-  # config.assets.precompile += %w( search.js )
-
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # Replace the default in-process memory cache store with a durable alternative.
+  config.cache_store = :null_store
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation can not be found).
+  # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
-  # Send deprecation notices to registered listeners.
-  config.active_support.deprecation = :notify
+  # Do not dump schema after migrations.
+  config.active_record.dump_schema_after_migration = false
 
-  # Disable automatic flushing of the log to improve performance.
-  # config.autoflush_log = false
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  # Only use :id for inspections in production.
+  config.active_record.attributes_for_inspect = [:id]
 end
