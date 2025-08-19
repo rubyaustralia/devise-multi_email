@@ -1,4 +1,7 @@
+.irb_history
+.DS_Store
 /.bundle/
+/.claude/
 /.yardoc
 /Gemfile.lock
 /_yardoc/
